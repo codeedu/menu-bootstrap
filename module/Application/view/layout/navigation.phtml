@@ -1,0 +1,33 @@
+<?php
+
+foreach ($this->container as $page):
+    $sub = $page->getPages();
+
+    $aAttribs = '';
+    $liClasses = array();
+    $liClass = '';
+    if ($page->isActive(true))
+        $liClasses[] = 'active';
+    if (count($sub) > 0):
+        $liClasses[] = 'dropdown';
+        $aAttribs = ' class="dropdown-toggle" data-toggle="dropdown"';
+    endif;
+    if (count($liClasses) > 0)
+        $liClass = ' class="' . implode(' ', $liClasses) . '"';
+    $tamSub = count($sub);
+    $caret = $tamSub > 0 ? '<b class="caret"></b>' : '';
+    $href = $tamSub > 0 ? 'javascript:void(0)' : $this->url($page->getRoute(), array('action' => $page->getAction()));
+    echo '<li' . $liClass . '><a href="' . $href . '"' . $aAttribs . '>' . $page->getlabel() . $caret . '</a>';
+    if ($tamSub > 0):
+        echo '<ul class="dropdown-menu">';
+        foreach ($sub as $pages):
+            $active = $pages->isActive() ? ' class="active"' : '';
+            echo '<li' . $active . '><a href="' . $this->url($pages->getRoute(), array('action' => $pages->getAction())) . '">' . $pages->getlabel() . '</a></li>';
+        endforeach;
+        echo '</ul></li>';
+    else:
+        echo '</li>';
+    endif;
+    echo '<li class="divider-vertical"></li>';
+    unset($aAttribs, $liClass, $liClasses, $tamSub, $caret);
+endforeach;
